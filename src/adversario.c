@@ -29,7 +29,9 @@ adversario_t *adversario_crear(lista_t *pokemon)
 }
 int numero_aleratorio(int minimo,int maximo){
 	srand((unsigned int)time(NULL));
-	return minimo + rand() % (maximo - minimo + 1);
+	int rango = maximo - minimo + 1;
+	int numero = rand() % rango + minimo;
+	return numero;
 }
 bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
 				    char **nombre2, char **nombre3)
@@ -37,21 +39,13 @@ bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
 	size_t maximo = lista_tamanio(adversario->pokemones);
 	int posicion = numero_aleratorio(0,(int)maximo-1);
 	pokemon_t *poke1 = lista_elemento_en_posicion(adversario->pokemones,(size_t)posicion);
-	bool validez = true;
-	int posicion2;
-	while(validez){
-		posicion2 = numero_aleratorio(0,(int)maximo-1);
-		if(posicion2 != posicion)
-			validez = false;
-	}
+	lista_quitar_de_posicion(adversario->pokemones,(size_t) posicion);
+	maximo = lista_tamanio(adversario->pokemones);
+	int posicion2 = numero_aleratorio(0,(int)maximo-1);
 	pokemon_t *poke2 = lista_elemento_en_posicion(adversario->pokemones,(size_t)posicion2);
-	bool validez2 = true;
-	int posicion3;
-	while(validez2){
-		posicion3 = numero_aleratorio(0,(int)maximo-1);
-		if(posicion3 != posicion && posicion3 != posicion2)
-			validez = false;
-	}
+	lista_quitar_de_posicion(adversario->pokemones,(size_t) posicion2);
+	maximo = lista_tamanio(adversario->pokemones);
+	int posicion3 = numero_aleratorio(0,(int)maximo-1);
 	pokemon_t *poke3 = lista_elemento_en_posicion(adversario->pokemones,(size_t)posicion3);
 	const char *nombre_poke1 = pokemon_nombre(poke1);
 	const char *nombre_poke2 = pokemon_nombre(poke2);
@@ -86,18 +80,36 @@ int comparador_2(void *ataque1, void* ataque2){
 		return 0;
 	return 1;
 }
+void funcion(const struct ataque *ataque, void* lista){
+	lista = lista_insertar(lista,(void *)ataque);
+}
+int comparar1(void * ataque1, void *ataque2){
+	if(ataque1 == ataque2)
+		return 0;
+	return 1;
+}
 jugada_t adversario_proxima_jugada(adversario_t *adversario)
 {
-	const struct ataque *ataque = NULL;
-	pokemon_t *poke = NULL;
-	while (ataque == NULL || lista_buscar_elemento(adversario->ataques_usados,comparador_2,(void *)ataque) == NULL)
-	{
-		int posicion = numero_aleratorio(0,2);
-		poke = lista_elemento_en_posicion(adversario->pokemones_adversario,(size_t)posicion);
-		int posicion_ataque = numero_aleratorio(0,17);
-		ataque = pokemon_buscar_ataque(poke,nombres[posicion_ataque]);
+	int posicion = numero_aleratorio(0,2);
+	pokemon_t *poke = lista_elemento_en_posicion(adversario->pokemones_adversario,(size_t)posicion);
+	lista_t *lista = lista_crear();
+	con_cada_ataque(poke,funcion,lista);
+	bool seguir = true;
+	int posicion2 = numero_aleratorio(0,2);
+	struct ataque *ataque = lista_elemento_en_posicion(lista,(size_t)posicion2);
+	if(lista_buscar_elemento(adversario->ataques_usados,comparar1,(void *)ataque) != NULL){
+		while (seguir)
+		{
+			posicion2 = numero_aleratorio(0,2);
+			ataque = lista_elemento_en_posicion(lista,(size_t)posicion2);
+			if(lista_buscar_elemento(adversario->ataques_usados,comparar1,(void *)ataque) == NULL){
+				seguir = false;
+			}
+		}
+		
 	}
 	adversario->ataques_usados = lista_insertar(adversario->ataques_usados,(void *)ataque);
+	lista_destruir(lista);
 	jugada_t jugada;
 	strcpy(jugada.ataque,ataque->nombre);
 	strcpy(jugada.pokemon,pokemon_nombre(poke));

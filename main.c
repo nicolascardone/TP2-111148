@@ -20,8 +20,13 @@
 */
 char *pedir_archivo(){
 	printf("\t INGRESE EL NOMBRE DEL ARCHIVO \n");
-	char *archivo;
-	fgets(archivo,sizeof(archivo),stdin);
+	char *archivo = (char *)malloc(100 * sizeof(char));
+	if(archivo == NULL){
+		printf("ERROR DE MEMORIA \n");
+		return NULL;
+	}
+
+	fgets(archivo,100,stdin);
 	archivo[strlen(archivo) -1] = '\0';
 
 	return archivo;
@@ -52,6 +57,7 @@ void pedir_pokemones_jugador(char **nombre1,char **nombre2,char **nombre3){
 	printf("\t INGRESE EL NOMBRE DEL TERCER POKEMON \n");
 	fgets(*nombre3,(int)maximo_tamano,stdin);
 	(*nombre3)[strlen(*nombre3) -1] = '\0';
+	return;
 }
 jugada_t jugador_pedir_nombre_y_ataque(){
 	printf("\t INGRESE EL NOMBRE DEL POKEMON A UTILIZAR EN LA RONDA \n");
@@ -158,12 +164,20 @@ int main(int argc, char *argv[])
 		//jugar la ronda y después comprobar que esté todo ok, si no, volver a pedir la jugada del jugador
 		resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
 						    jugada_adversario);
-
-		while(resultado_ronda.jugador1 == ATAQUE_ERROR){
-			printf("DEBE INGRESAR UN POKEMON Y ATAQUE VALIDO \n");
-			jugada_jugador = jugador_pedir_nombre_y_ataque();
-			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
-						    jugada_adversario);
+		printf("%s \n",jugada_jugador.pokemon);
+		printf("%s \n",jugada_jugador.ataque);
+		if(resultado_ronda.jugador1 == ATAQUE_ERROR){
+			printf("LLEGUE ACA \n");
+			bool validez = true;
+			while(validez){
+				printf("DEBE INGRESAR UN POKEMON Y ATAQUE VALIDO \n");
+				jugada_jugador = jugador_pedir_nombre_y_ataque();
+				resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
+								jugada_adversario);
+				if(resultado_ronda.jugador1 != ATAQUE_ERROR){
+					validez = false;
+				}
+			}
 		}
 
 		//Si se pudo jugar el turno, le informo al adversario la jugada realizada por el jugador
