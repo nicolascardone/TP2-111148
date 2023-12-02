@@ -28,7 +28,7 @@ adversario_t *adversario_crear(lista_t *pokemon)
 	return adversario;
 }
 int numero_aleratorio(int minimo,int maximo){
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	return minimo + rand() % (maximo - minimo + 1);
 }
 bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
@@ -68,7 +68,7 @@ bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
 	adversario->pokemones_adversario = lista_insertar(adversario->pokemones_adversario,poke2);
 	return true;
 }
-int comparador(void *pokemon1, void *nombre){
+int comparador_3(void *pokemon1, void *nombre){
 	
 	if(strcmp(pokemon_nombre(pokemon1),nombre) == 0)
 		return 0;
@@ -77,7 +77,7 @@ int comparador(void *pokemon1, void *nombre){
 bool adversario_pokemon_seleccionado(adversario_t *adversario, char *nombre1,
 				     char *nombre2, char *nombre3)
 {
-	pokemon_t *pokemon3 = lista_buscar_elemento(adversario->pokemones,comparador,nombre3);
+	pokemon_t *pokemon3 = lista_buscar_elemento(adversario->pokemones,comparador_3,nombre3);
 	adversario->pokemones_adversario = lista_insertar(adversario->pokemones_adversario,pokemon3);
 	return true;
 }
@@ -90,15 +90,17 @@ jugada_t adversario_proxima_jugada(adversario_t *adversario)
 {
 	const struct ataque *ataque = NULL;
 	pokemon_t *poke = NULL;
-	while (ataque == NULL && lista_buscar_elemento(adversario->ataques_usados,comparador_2,(void *)ataque) == NULL)
+	while (ataque == NULL || lista_buscar_elemento(adversario->ataques_usados,comparador_2,(void *)ataque) == NULL)
 	{
 		int posicion = numero_aleratorio(0,2);
-		pokemon_t *poke = lista_elemento_en_posicion(adversario->pokemones_adversario,(size_t)posicion);
+		poke = lista_elemento_en_posicion(adversario->pokemones_adversario,(size_t)posicion);
 		int posicion_ataque = numero_aleratorio(0,17);
 		ataque = pokemon_buscar_ataque(poke,nombres[posicion_ataque]);
 	}
 	adversario->ataques_usados = lista_insertar(adversario->ataques_usados,(void *)ataque);
-	jugada_t jugada = { ataque->nombre, pokemon_nombre(poke)};
+	jugada_t jugada;
+	strcpy(jugada.ataque,ataque->nombre);
+	strcpy(jugada.pokemon,pokemon_nombre(poke));
 	return jugada;
 }
 
