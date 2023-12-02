@@ -35,6 +35,8 @@ JUEGO_ESTADO juego_cargar_pokemon(juego_t *juego, char *archivo)
 		return ERROR_GENERAL;
 	}
 	if(pokemon_cantidad(juego->info) < 6){
+		free(juego->info);
+		juego->info = NULL;
 		return POKEMON_INSUFICIENTES;
 	}
 	juego->jugador1 = calloc(1,sizeof(struct jugador));
@@ -50,6 +52,8 @@ JUEGO_ESTADO juego_cargar_pokemon(juego_t *juego, char *archivo)
 	return TODO_OK;
 }
 void insertar(pokemon_t *pokemon, void *aux){
+	if(aux == NULL)
+		return;
 	aux = lista_insertar(aux,pokemon);
 }
 lista_t *juego_listar_pokemon(juego_t *juego)
@@ -263,12 +267,14 @@ void juego_destruir(juego_t *juego)
 		return;
 	if(juego->jugador1){
 		lista_destruir(juego->jugador1->lista);
-		lista_destruir(juego->jugador1->ataques);
+		if(juego->jugador1->ataques)
+			lista_destruir(juego->jugador1->ataques);
 		free(juego->jugador1);
 	}
 	if(juego->jugador1){
 		lista_destruir(juego->jugador2->lista);
-		lista_destruir(juego->jugador2->ataques);
+		if(juego->jugador2->ataques)
+			lista_destruir(juego->jugador2->ataques);
 		free(juego->jugador2);
 	}
 	lista_destruir(juego->pokemones);
