@@ -215,8 +215,8 @@ resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 	bool error1 = false;
 	const struct ataque *ataque1 = NULL;
 	const struct ataque *ataque2 = NULL;
-	pokemon_t *pokemon1 = lista_buscar_elemento(juego->jugador1->lista,comparador,pokemon_buscar(juego->info,jugada_jugador1.pokemon));
-	pokemon_t *pokemon2 = lista_buscar_elemento(juego->jugador2->lista,comparador,pokemon_buscar(juego->info,jugada_jugador2.pokemon));
+	pokemon_t *pokemon1 = lista_buscar_elemento(juego->jugador1->lista,comparador,(void*)pokemon_buscar(juego->info,jugada_jugador1.pokemon));
+	pokemon_t *pokemon2 = lista_buscar_elemento(juego->jugador2->lista,comparador,(void*)pokemon_buscar(juego->info,jugada_jugador2.pokemon));
 	if(pokemon1 != NULL)
 		ataque1 = pokemon_buscar_ataque(pokemon1,jugada_jugador1.ataque);
 	if(pokemon2 != NULL)

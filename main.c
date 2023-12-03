@@ -140,6 +140,9 @@ int main(int argc, char *argv[])
 		free(eleccionJugador1);
 		free(eleccionJugador2);
 		free(eleccionJugador3);
+		free(eleccionAdversario1);
+		free(eleccionAdversario2);
+		free(eleccionAdversario3);
 		free(archivo);
 		adversario_destruir(adversario);
 		juego_destruir(juego);
@@ -162,8 +165,6 @@ int main(int argc, char *argv[])
 		jugada_t jugada_adversario;
 		printf("Ronda %d \n",rondas);
 		jugada_jugador = jugador_pedir_nombre_y_ataque();
-		resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
-								jugada_adversario);;
 		jugada_adversario =
 				adversario_proxima_jugada(adversario);
 			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
@@ -203,6 +204,10 @@ int main(int argc, char *argv[])
 	free(eleccionJugador1);
 	free(eleccionJugador2);
 	free(eleccionJugador3);
+	free(eleccionAdversario1);
+	free(eleccionAdversario2);
+	free(eleccionAdversario3);
+	free(archivo);
 	adversario_destruir(adversario);
 	juego_destruir(juego);
 	return 0;
