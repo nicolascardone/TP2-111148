@@ -75,7 +75,7 @@ bool adversario_pokemon_seleccionado(adversario_t *adversario, char *nombre1,
 	adversario->pokemones_adversario = lista_insertar(adversario->pokemones_adversario,pokemon3);
 	return true;
 }
-int comparador_2(void *ataque1, void* ataque2){
+int comparar2(void *ataque1, void* ataque2){
 	if(ataque1 == ataque2)
 		return 0;
 	return 1;
@@ -95,6 +95,20 @@ jugada_t adversario_proxima_jugada(adversario_t *adversario)
 	lista_t *lista = lista_crear();
 	con_cada_ataque(poke,funcion,lista);
 	bool seguir = true;
+	int contador = 0;
+	for(int i = 0; i < 3; i++){
+		if(lista_buscar_elemento(adversario->ataques_usados,comparar2,lista_elemento_en_posicion(lista,(size_t)i)) != NULL){
+			contador++;
+		}
+	}
+	if(contador == 3){
+		lista_quitar_de_posicion(adversario->pokemones_adversario,(size_t)posicion);
+		lista_destruir(lista);
+		posicion = numero_aleratorio(0,2);
+		poke = lista_elemento_en_posicion(adversario->pokemones_adversario,(size_t)posicion);
+		lista = lista_crear();
+		con_cada_ataque(poke,funcion,lista);
+	}
 	int posicion2 = numero_aleratorio(0,2);
 	struct ataque *ataque = lista_elemento_en_posicion(lista,(size_t)posicion2);
 	if(lista_buscar_elemento(adversario->ataques_usados,comparar1,(void *)ataque) != NULL){
