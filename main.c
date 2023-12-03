@@ -6,18 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-/**
-* Este main debe ser modificado para que el usuario pueda jugar el juego. Las
-* instrucciones existentes son solamente a modo ilustrativo del funcionamiento
-* muy alto nivel del juego.
-*
-* Las interacciones deben realizarse por entrada/salida estandar y estar validadas.
-*
-* Se aconseja en todo momento mostrar información relevante para el jugador (por
-* ejemplo, mostrar puntaje actual y movimientos disponibles) para hacer que el
-* juego sea facil de utilizar.
-*/
 char *pedir_archivo(){
 	printf("\t INGRESE EL NOMBRE DEL ARCHIVO \n");
 	char *archivo = (char *)malloc(100 * sizeof(char));
@@ -25,10 +13,8 @@ char *pedir_archivo(){
 		printf("ERROR DE MEMORIA \n");
 		return NULL;
 	}
-
 	fgets(archivo,100,stdin);
 	archivo[strlen(archivo) -1] = '\0';
-
 	return archivo;
 }
 bool imprimir(void *pokemon, void *aux){
@@ -85,11 +71,13 @@ int main(int argc, char *argv[])
 	JUEGO_ESTADO estado_carga = juego_cargar_pokemon(juego, archivo);
 	if(estado_carga == ERROR_GENERAL){
 		printf("\t ERROR AL CARGAR ARCHIVO \n");
+		free(archivo);
 		juego_destruir(juego);
 		return 0;
 	}
 	if(estado_carga == POKEMON_INSUFICIENTES){
 		printf("\t ERROR POR FALTA DE POKEMONES \n");
+		free(archivo);
 		juego_destruir(juego);
 		return 0;
 	}
@@ -108,7 +96,11 @@ int main(int argc, char *argv[])
 	pedir_pokemones_jugador(&eleccionJugador1,&eleccionJugador2,&eleccionJugador3);
 	if(eleccionJugador1 == NULL || eleccionJugador2 == NULL || eleccionJugador3 == NULL){
 		juego_destruir(juego);
+		free(archivo);
 		adversario_destruir(adversario);
+		free(eleccionJugador1);
+		free(eleccionJugador2);
+		free(eleccionJugador3);
 		return 0;
 	}
 	//pedirle al adversario que indique los 3 pokemon que quiere usar
@@ -116,10 +108,7 @@ int main(int argc, char *argv[])
 	adversario_seleccionar_pokemon(adversario, &eleccionAdversario1,
 				       &eleccionAdversario2,
 				       &eleccionAdversario3);
-	printf("Pokemones Jugador:   \t Pokemones Adversario \n");
-	printf("%s    \t         %s\n",eleccionJugador1,eleccionAdversario1);
-	printf("%s    \t         %s\n",eleccionJugador2,eleccionAdversario2);
-	printf("%s    \t         %s\n",eleccionAdversario3,eleccionJugador3);
+	
 	//Seleccionar los pokemon de los jugadores
 	JUEGO_ESTADO estado_seleccion = juego_seleccionar_pokemon(juego, JUGADOR1, eleccionJugador1,
 				  eleccionJugador2, eleccionJugador3);
@@ -137,12 +126,29 @@ int main(int argc, char *argv[])
 		if(eleccionJugador1 == NULL || eleccionJugador2 == NULL || eleccionJugador3 == NULL){
 			juego_destruir(juego);
 			adversario_destruir(adversario);
+			free(archivo);
+			free(eleccionJugador1);
+			free(eleccionJugador2);
+			free(eleccionJugador3);
 			return 0;
 		}
 		estado_seleccion = juego_seleccionar_pokemon(juego, JUGADOR1, eleccionJugador1,
 				  eleccionJugador2, eleccionJugador3);
 	}
-	
+	if(strcmp(eleccionAdversario3,eleccionJugador1) == 0|| strcmp(eleccionAdversario3,eleccionJugador2) ==0){
+		printf("ERROR ASIGNANDO POKEMONES"); //bug que no llegue a solucionar
+		free(eleccionJugador1);
+		free(eleccionJugador2);
+		free(eleccionJugador3);
+		free(archivo);
+		adversario_destruir(adversario);
+		juego_destruir(juego);
+		return 0;
+	}
+	printf("Pokemones Jugador:   \t Pokemones Adversario \n");
+	printf("%s    \t         %s\n",eleccionJugador1,eleccionAdversario1);
+	printf("%s    \t         %s\n",eleccionJugador2,eleccionAdversario2);
+	printf("%s    \t         %s\n",eleccionAdversario3,eleccionJugador3);
 	juego_seleccionar_pokemon(juego, JUGADOR2, eleccionAdversario1,
 				  eleccionAdversario2, eleccionAdversario3);
 
@@ -155,31 +161,49 @@ int main(int argc, char *argv[])
 		jugada_t jugada_jugador;
 		jugada_t jugada_adversario;
 		printf("Ronda %d \n",rondas);
-		//Pide al jugador que ingrese por consola el pokemon y ataque para la siguiente ronda
-		inicio:
-
 		jugada_jugador = jugador_pedir_nombre_y_ataque();
-
-		//Pide al adversario que informe el pokemon y ataque para la siguiente ronda
-		jugada_adversario =
-			adversario_proxima_jugada(adversario);
-
-		//jugar la ronda y después comprobar que esté todo ok, si no, volver a pedir la jugada del jugador
 		resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
-						    jugada_adversario);
-		printf("%s \n",jugada_jugador.pokemon);
-		printf("%s \n",jugada_jugador.ataque);
-		if(resultado_ronda.jugador1 == ATAQUE_ERROR){
-			printf("ERROR AL ELEGIR POKEMON Y ATAQUE");
-			goto inicio;
+								jugada_adversario);;
+		jugada_adversario =
+				adversario_proxima_jugada(adversario);
+			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
+								jugada_adversario);
+		//Pide al jugador que ingrese por consola el pokemon y ataque para la siguiente ronda
+		while(resultado_ronda.jugador1 == ATAQUE_ERROR){
+			jugada_jugador = jugador_pedir_nombre_y_ataque();
+
+			//Pide al adversario que informe el pokemon y ataque para la siguiente ronda
+
+			//jugar la ronda y después comprobar que esté todo ok, si no, volver a pedir la jugada del jugador
+			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
+								jugada_adversario);
 		}
 		rondas++;
 		printf(" \t \t Puntaje Jugador: %d \n",juego_obtener_puntaje(juego,JUGADOR1));
 		printf("\t\t Puntaje Adeversario: %d \n",juego_obtener_puntaje(juego,JUGADOR2));
+		printf("JUGADA JUGADOR:  \t JUGADA ADVERSARIO: \n");
+		printf("%s \t\t\t %s\n",jugada_jugador.pokemon,jugada_adversario.pokemon);
+		printf("%s \t\t\t %s\n",jugada_jugador.ataque,jugada_adversario.ataque);
+		printf("============================================================================================== \n");
 		
 		//Si se pudo jugar el turno, le informo al adversario la jugada realizada por el jugador
 		adversario_informar_jugada(adversario, jugada_jugador);
 	}
 
+	if(juego_obtener_puntaje(juego,JUGADOR1) > juego_obtener_puntaje(juego,JUGADOR2)){
+		printf("FELICITACIONES GANASTE \n");
+	}else if(juego_obtener_puntaje(juego,JUGADOR2) > juego_obtener_puntaje(juego,JUGADOR1)){
+		printf("PERDISTE, SUERTE LA PROXIMA \n");
+	}else{
+		printf("EMPATE \n");
+	}
+	printf(" \t PUNTAJE FINAL: \n");
+	printf(" \t \t Puntaje Jugador: %d \n",juego_obtener_puntaje(juego,JUGADOR1));
+	printf("\t\t Puntaje Adeversario: %d \n",juego_obtener_puntaje(juego,JUGADOR2));
+	free(eleccionJugador1);
+	free(eleccionJugador2);
+	free(eleccionJugador3);
+	adversario_destruir(adversario);
 	juego_destruir(juego);
+	return 0;
 }
