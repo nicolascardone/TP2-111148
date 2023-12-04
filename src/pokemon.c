@@ -123,7 +123,7 @@ pokemon_t *pokemon_buscar(informacion_pokemon_t *ip, const char *nombre)
 {
 	if (ip == NULL || nombre == NULL)
 		return NULL;
-	for (int i = 0; i <= ip->cantidad; i++) {
+	for (int i = 0; i < ip->cantidad; i++) {
 		if (strcmp(ip->pokemones[i].nombre, nombre) == 0) {
 			pokemon_t *pokemon = &ip->pokemones[i];
 			return pokemon;
