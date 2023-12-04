@@ -104,10 +104,6 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	//pedirle al adversario que indique los 3 pokemon que quiere usar
-	char *eleccionAdversario1, *eleccionAdversario2, *eleccionAdversario3;
-	adversario_seleccionar_pokemon(adversario, &eleccionAdversario1,
-				       &eleccionAdversario2,
-				       &eleccionAdversario3);
 	
 	//Seleccionar los pokemon de los jugadores
 	JUEGO_ESTADO estado_seleccion = juego_seleccionar_pokemon(juego, JUGADOR1, eleccionJugador1,
@@ -135,19 +131,11 @@ int main(int argc, char *argv[])
 		estado_seleccion = juego_seleccionar_pokemon(juego, JUGADOR1, eleccionJugador1,
 				  eleccionJugador2, eleccionJugador3);
 	}
-	if(strcmp(eleccionAdversario3,eleccionJugador1) == 0|| strcmp(eleccionAdversario3,eleccionJugador2) ==0){
-		printf("ERROR ASIGNANDO POKEMONES"); //bug que no llegue a solucionar
-		free(eleccionJugador1);
-		free(eleccionJugador2);
-		free(eleccionJugador3);
-		free(eleccionAdversario1);
-		free(eleccionAdversario2);
-		free(eleccionAdversario3);
-		free(archivo);
-		adversario_destruir(adversario);
-		juego_destruir(juego);
-		return 0;
-	}
+	char *eleccionAdversario1, *eleccionAdversario2, *eleccionAdversario3;
+	adversario_seleccionar_pokemon(adversario, &eleccionAdversario1,
+				       &eleccionAdversario2,
+				       &eleccionAdversario3);
+	
 	printf("Pokemones Jugador:   \t Pokemones Adversario \n");
 	printf("%s    \t         %s\n",eleccionJugador1,eleccionAdversario1);
 	printf("%s    \t         %s\n",eleccionJugador2,eleccionAdversario2);
@@ -163,17 +151,17 @@ int main(int argc, char *argv[])
 		resultado_jugada_t resultado_ronda;
 		jugada_t jugada_jugador;
 		jugada_t jugada_adversario;
-		printf("Ronda %d \n",rondas);
+		printf("\n");
+		printf("Ronda: %d \n",rondas);
 		jugada_jugador = jugador_pedir_nombre_y_ataque();
 		jugada_adversario =
 				adversario_proxima_jugada(adversario);
-			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
-								jugada_adversario);
+		resultado_ronda = juego_jugar_turno(juego, jugada_jugador,
+							jugada_adversario);
 		//Pide al jugador que ingrese por consola el pokemon y ataque para la siguiente ronda
 		while(resultado_ronda.jugador1 == ATAQUE_ERROR){
+			printf("ERROR ELEGIENDO ATAQUE Y POKEMON \n");
 			jugada_jugador = jugador_pedir_nombre_y_ataque();
-
-			//Pide al adversario que informe el pokemon y ataque para la siguiente ronda
 
 			//jugar la ronda y después comprobar que esté todo ok, si no, volver a pedir la jugada del jugador
 			resultado_ronda = juego_jugar_turno(juego, jugada_jugador,

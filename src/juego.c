@@ -68,6 +68,9 @@ lista_t *juego_listar_pokemon(juego_t *juego)
 	con_cada_pokemon(juego->info,insertar,juego->pokemones);
 	return juego->pokemones;
 }
+void insertar2(const struct ataque *ataque, void *aux){
+	aux = lista_insertar(aux,(void*)ataque);
+}
 JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
 				       const char *nombre1, const char *nombre2,
 				       const char *nombre3)
@@ -85,10 +88,17 @@ JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
 		juego->jugador1->lista = lista_insertar(juego->jugador1->lista,(void *)poke1);
 		juego->jugador1->lista = lista_insertar(juego->jugador1->lista,(void *)poke2);
 		juego->jugador2->lista = lista_insertar(juego->jugador2->lista,(void *)poke3);
+		con_cada_ataque(poke1,insertar2,juego->jugador1->ataques);
+		con_cada_ataque(poke2,insertar2,juego->jugador1->ataques);
+		con_cada_ataque(poke3,insertar2,juego->jugador2->ataques);
+
 	}else if(jugador == JUGADOR2){
 		juego->jugador2->lista = lista_insertar(juego->jugador2->lista,(void *)poke1);
 		juego->jugador2->lista = lista_insertar(juego->jugador2->lista,(void *)poke2);
 		juego->jugador1->lista = lista_insertar(juego->jugador1->lista,(void *)poke3);
+		con_cada_ataque(poke1,insertar2,juego->jugador2->ataques);
+		con_cada_ataque(poke2,insertar2,juego->jugador2->ataques);
+		con_cada_ataque(poke3,insertar2,juego->jugador1->ataques);
 	}
 	return TODO_OK;
 }
@@ -200,17 +210,20 @@ RESULTADO_ATAQUE calcular_resultado_jugada(pokemon_t *pokemon, const struct ataq
 	}
 	return resultado_ataque;
 }
-size_t obtener_posicion(lista_t *ataques, void *ataque){
-	for(size_t i = 0; i < lista_tamanio(ataques); i++){
-		if(lista_elemento_en_posicion(ataques,i) == ataque){
-			return i;
-		}
+bool ataque_utilizado(lista_t *ataques, const struct ataque *ataque){
+	void* elemento = lista_buscar_elemento(ataques,comparador,(void*)ataque);
+	if(elemento != NULL){
+		return false;
 	}
-	return 0;
+	return true;
 }
 resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 				     jugada_t jugada_jugador2)
 {
+	for(size_t i = 0; i < 9; i++){
+		const struct ataque *ataqueee = lista_elemento_en_posicion(juego->jugador1->ataques,i);
+		printf("%s \n",ataqueee->nombre);
+	}
 	resultado_jugada_t resultado ;
 	bool error1 = false;
 	const struct ataque *ataque1 = NULL;
@@ -229,26 +242,38 @@ resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 		resultado.jugador2 = ATAQUE_ERROR;
 		error1 = true;
 	}
-	lista_t *lista = juego->jugador1->ataques;
-	if(lista_buscar_elemento(lista,comparador,(void*)ataque1) != NULL) {
-		resultado.jugador1 = ATAQUE_ERROR;
-		error1 = true;
-	}
-	lista_t *aux2 = juego->jugador2->ataques;
-	if(lista_buscar_elemento(aux2,comparador,(void*)ataque2) != NULL){
-		resultado.jugador2 = ATAQUE_ERROR;
-		error1 = true;
-	}
-	unsigned int resultado1;
-	unsigned int resultado2;
-	if(error1 == false){
-		resultado.jugador1 = calcular_resultado_jugada(pokemon2,ataque1,&resultado1);
-		juego->jugador1->puntaje += (int)resultado1;
-		juego->jugador1->ataques = lista_insertar(juego->jugador1->ataques,(void *)ataque1);
-		resultado.jugador2 = calcular_resultado_jugada(pokemon1,ataque2,&resultado2);
-		juego->jugador2->puntaje += (int)resultado2;
-		juego->jugador2->ataques = lista_insertar(juego->jugador2->ataques,(void *)ataque2);
-		juego->rondas++;
+	if(!error1){
+		lista_t *lista_1 = juego->jugador1->ataques;
+		lista_t *lista_2 = juego->jugador2->ataques;
+		if(ataque_utilizado(lista_1,ataque1)){
+			resultado.jugador1 = ATAQUE_ERROR;
+			error1 = true;
+		}
+		if(ataque_utilizado(lista_2,ataque2)){
+			resultado.jugador2 = ATAQUE_ERROR;
+			error1 = true;
+		}
+		unsigned int resultado1;
+		unsigned int resultado2;
+		if(error1 == false){
+			resultado.jugador1 = calcular_resultado_jugada(pokemon2,ataque1,&resultado1);
+			juego->jugador1->puntaje += (int)resultado1;
+			resultado.jugador2 = calcular_resultado_jugada(pokemon1,ataque2,&resultado2);
+			juego->jugador2->puntaje += (int)resultado2;
+			juego->rondas++;
+			for(size_t i = 0; i < lista_tamanio(juego->jugador1->ataques); i++){
+				if(lista_elemento_en_posicion(juego->jugador1->ataques,i) == (void*)ataque1){
+					lista_quitar_de_posicion(juego->jugador1->ataques,i);
+					break;
+				}
+			}
+			for(size_t n = 0; n < lista_tamanio(juego->jugador1->ataques); n++){
+				if(lista_elemento_en_posicion(juego->jugador2->ataques,n) == (void*)ataque2){
+					lista_quitar_de_posicion(juego->jugador2->ataques,n);
+					break;
+				}
+			}
+		}
 	}
 	return resultado;
 }
@@ -281,13 +306,15 @@ void juego_destruir(juego_t *juego)
 	if(juego == NULL)
 		return;
 	if(juego->jugador1){
-		lista_destruir(juego->jugador1->lista);
+		if(juego->jugador1->lista)
+			lista_destruir(juego->jugador1->lista);
 		if(juego->jugador1->ataques)
 			lista_destruir(juego->jugador1->ataques);
 		free(juego->jugador1);
 	}
 	if(juego->jugador1){
-		lista_destruir(juego->jugador2->lista);
+		if(juego->jugador2->lista)
+			lista_destruir(juego->jugador2->lista);
 		if(juego->jugador2->ataques)
 			lista_destruir(juego->jugador2->ataques);
 		free(juego->jugador2);
