@@ -220,20 +220,20 @@ bool ataque_utilizado(lista_t *ataques, const struct ataque *ataque){
 resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 				     jugada_t jugada_jugador2)
 {
-	for(size_t i = 0; i < 9; i++){
-		const struct ataque *ataqueee = lista_elemento_en_posicion(juego->jugador1->ataques,i);
-		printf("%s \n",ataqueee->nombre);
-	}
 	resultado_jugada_t resultado ;
 	bool error1 = false;
 	const struct ataque *ataque1 = NULL;
 	const struct ataque *ataque2 = NULL;
-	pokemon_t *pokemon1 = lista_buscar_elemento(juego->jugador1->lista,comparador,(void*)pokemon_buscar(juego->info,jugada_jugador1.pokemon));
-	pokemon_t *pokemon2 = lista_buscar_elemento(juego->jugador2->lista,comparador,(void*)pokemon_buscar(juego->info,jugada_jugador2.pokemon));
+	pokemon_t *poke = pokemon_buscar(juego->info,jugada_jugador1.pokemon);
+	pokemon_t *pokemon1 = lista_buscar_elemento(juego->jugador1->lista,comparador,(void*)poke);
+	pokemon_t *poke2 = pokemon_buscar(juego->info,jugada_jugador2.pokemon);
+	pokemon_t *pokemon2 = lista_buscar_elemento(juego->jugador2->lista,comparador,(void*)poke2);
+	const char *a1 = jugada_jugador1.ataque;
+	const char *a2 = jugada_jugador2.ataque;
 	if(pokemon1 != NULL)
-		ataque1 = pokemon_buscar_ataque(pokemon1,jugada_jugador1.ataque);
+		ataque1 = pokemon_buscar_ataque(pokemon1,a1);
 	if(pokemon2 != NULL)
-		ataque2 = pokemon_buscar_ataque(pokemon2,jugada_jugador2.ataque);
+		ataque2 = pokemon_buscar_ataque(pokemon2,a2);
 	if(pokemon1 == NULL || ataque1 == NULL){
 		resultado.jugador1 = ATAQUE_ERROR;
 		error1 = true;

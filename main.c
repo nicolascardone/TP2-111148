@@ -122,10 +122,10 @@ int main(int argc, char *argv[])
 		if(eleccionJugador1 == NULL || eleccionJugador2 == NULL || eleccionJugador3 == NULL){
 			juego_destruir(juego);
 			adversario_destruir(adversario);
-			free(archivo);
 			free(eleccionJugador1);
 			free(eleccionJugador2);
 			free(eleccionJugador3);
+			free(archivo);
 			return 0;
 		}
 		estado_seleccion = juego_seleccionar_pokemon(juego, JUGADOR1, eleccionJugador1,

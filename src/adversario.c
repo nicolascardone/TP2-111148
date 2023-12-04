@@ -48,7 +48,6 @@ bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
 	lista_quitar_de_posicion(lista_aux,(size_t) posicion2);
 	maximo = lista_tamanio(lista_aux);
 	int posicion3 = numero_aleratorio(0,(int)maximo-1);
-	posicion3 = 0;
 	pokemon_t *poke3 = lista_elemento_en_posicion(lista_aux,(size_t)posicion3);
 	const char *nombre_poke1 = pokemon_nombre(poke1);
 	const char *nombre_poke2 = pokemon_nombre(poke2);
@@ -124,7 +123,5 @@ void adversario_destruir(adversario_t *adversario)
 {
 	if(adversario->pokemones_adversario != NULL)
 		lista_destruir(adversario->pokemones_adversario);
-	if(adversario->pokemones != NULL)
-		lista_destruir(adversario->pokemones);
 	free(adversario);
 }
