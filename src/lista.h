@@ -31,7 +31,7 @@ lista_t *lista_insertar(lista_t *lista, void *elemento);
  * en caso de exito.
  */
 lista_t *lista_insertar_en_posicion(lista_t *lista, void *elemento,
-                                    size_t posicion);
+				    size_t posicion);
 
 /**
  * Quita de la lista el elemento que se encuentra en la ultima posición.
@@ -67,7 +67,7 @@ void *lista_elemento_en_posicion(lista_t *lista, size_t posicion);
  * Si no existe el elemento devuelve NULL.
  */
 void *lista_buscar_elemento(lista_t *lista, int (*comparador)(void *, void *),
-                            void *contexto);
+			    void *contexto);
 
 /**
  * Devuelve el primer elemento de la lista o NULL si la lista se
@@ -156,6 +156,6 @@ void lista_iterador_destruir(lista_iterador_t *iterador);
  *
  */
 size_t lista_con_cada_elemento(lista_t *lista, bool (*funcion)(void *, void *),
-                               void *contexto);
+			       void *contexto);
 
 #endif /* __LISTA_H__ */

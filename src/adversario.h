@@ -27,7 +27,7 @@ adversario_t *adversario_crear(lista_t *);
  * Devuelve true si pudo seleccionar o false en caso de error,
  */
 bool adversario_seleccionar_pokemon(adversario_t *, char **nombre1,
-                                    char **nombre2, char **nombre3);
+				    char **nombre2, char **nombre3);
 
 /**
  * Informa al adversario los pokemon seleccionados por el jugador. Los primeros
@@ -37,7 +37,7 @@ bool adversario_seleccionar_pokemon(adversario_t *, char **nombre1,
  * Devuelve true en caso de exito o false en caso de error.
  */
 bool adversario_pokemon_seleccionado(adversario_t *, char *nombre1,
-                                     char *nombre2, char *nombre3);
+				     char *nombre2, char *nombre3);
 
 /**
  * Devuelve la próxima jugada del adversario para el turno actual. La jugada
