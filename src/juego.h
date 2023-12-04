@@ -49,9 +49,9 @@ juego_t *juego_crear();
 JUEGO_ESTADO juego_cargar_pokemon(juego_t *juego, char *archivo);
 
 /**
- * Devuelve una lista con todos los pokemon_t* disponibles para jugar. Esta lista
- * no debe ser modificada ni liberada por el usuario (será liberada por el juego
- * cuando este sea destruido).
+ * Devuelve una lista con todos los pokemon_t* disponibles para jugar. Esta
+ * lista no debe ser modificada ni liberada por el usuario (será liberada por el
+ * juego cuando este sea destruido).
  *
  * Devuelve la lista o NULL en caso de error.
  */
@@ -103,7 +103,8 @@ resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 int juego_obtener_puntaje(juego_t *juego, JUGADOR jugador);
 
 /**
- * Devuelve true si el juego ha finalizado o no existe. Devuelve false si aun quedan movimientos por jugar.
+ * Devuelve true si el juego ha finalizado o no existe. Devuelve false si aun
+ * quedan movimientos por jugar.
  */
 bool juego_finalizado(juego_t *juego);
 
