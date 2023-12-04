@@ -5,30 +5,30 @@
 #include <stdbool.h>
 
 typedef enum {
-	TODO_OK,
-	POKEMON_INSUFICIENTES,
-	ERROR_GENERAL,
-	POKEMON_INEXISTENTE,
-	POKEMON_REPETIDO
+  TODO_OK,
+  POKEMON_INSUFICIENTES,
+  ERROR_GENERAL,
+  POKEMON_INEXISTENTE,
+  POKEMON_REPETIDO
 } JUEGO_ESTADO;
 
 typedef enum {
-	ATAQUE_ERROR,
-	ATAQUE_EFECTIVO,
-	ATAQUE_INEFECTIVO,
-	ATAQUE_REGULAR
+  ATAQUE_ERROR,
+  ATAQUE_EFECTIVO,
+  ATAQUE_INEFECTIVO,
+  ATAQUE_REGULAR
 } RESULTADO_ATAQUE;
 
 typedef enum { JUGADOR1, JUGADOR2 } JUGADOR;
 
 typedef struct {
-	char pokemon[20];
-	char ataque[20];
+  char pokemon[20];
+  char ataque[20];
 } jugada_t;
 
 typedef struct {
-	RESULTADO_ATAQUE jugador1;
-	RESULTADO_ATAQUE jugador2;
+  RESULTADO_ATAQUE jugador1;
+  RESULTADO_ATAQUE jugador2;
 } resultado_jugada_t;
 
 typedef struct juego juego_t;
@@ -49,9 +49,9 @@ juego_t *juego_crear();
 JUEGO_ESTADO juego_cargar_pokemon(juego_t *juego, char *archivo);
 
 /**
- * Devuelve una lista con todos los pokemon_t* disponibles para jugar. Esta lista
- * no debe ser modificada ni liberada por el usuario (será liberada por el juego
- * cuando este sea destruido).
+ * Devuelve una lista con todos los pokemon_t* disponibles para jugar. Esta
+ * lista no debe ser modificada ni liberada por el usuario (será liberada por el
+ * juego cuando este sea destruido).
  *
  * Devuelve la lista o NULL en caso de error.
  */
@@ -66,8 +66,8 @@ lista_t *juego_listar_pokemon(juego_t *juego);
  * Opcionalmente puede devolver POKEMON_REPETIDO o POKEMON_INEXISTENTE.
  */
 JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
-				       const char *nombre1, const char *nombre2,
-				       const char *nombre3);
+                                       const char *nombre1, const char *nombre2,
+                                       const char *nombre3);
 
 /**
  * El juego procesa las jugadas de ambos jugadores. Retorna una estructura con
@@ -95,7 +95,7 @@ JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
  * disponibles).
  */
 resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
-				     jugada_t jugada_jugador2);
+                                     jugada_t jugada_jugador2);
 
 /**
  * Devuelve el puntaje actual del jugador solicitado o 0 en caso de error.
@@ -103,7 +103,8 @@ resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 int juego_obtener_puntaje(juego_t *juego, JUGADOR jugador);
 
 /**
- * Devuelve true si el juego ha finalizado o no existe. Devuelve false si aun quedan movimientos por jugar.
+ * Devuelve true si el juego ha finalizado o no existe. Devuelve false si aun
+ * quedan movimientos por jugar.
  */
 bool juego_finalizado(juego_t *juego);
 

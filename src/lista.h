@@ -17,19 +17,21 @@ lista_t *lista_crear();
 /**
  * Inserta un elemento al final de la lista.
  *
- * Devuelve NULL si no pudo insertar el elemento a causa de un error, o la lista en caso de exito.
+ * Devuelve NULL si no pudo insertar el elemento a causa de un error, o la lista
+ * en caso de exito.
  */
 lista_t *lista_insertar(lista_t *lista, void *elemento);
 
 /**
  * Inserta un elemento en la posicion indicada, donde 0 es insertar
- * como primer elemento y 1 es insertar luego del primer elemento.  
+ * como primer elemento y 1 es insertar luego del primer elemento.
  * En caso de no existir la posicion indicada, lo inserta al final.
  *
- * Devuelve NULL si no pudo insertar el elemento a causa de un error, o la lista en caso de exito.
+ * Devuelve NULL si no pudo insertar el elemento a causa de un error, o la lista
+ * en caso de exito.
  */
 lista_t *lista_insertar_en_posicion(lista_t *lista, void *elemento,
-				    size_t posicion);
+                                    size_t posicion);
 
 /**
  * Quita de la lista el elemento que se encuentra en la ultima posición.
@@ -65,7 +67,7 @@ void *lista_elemento_en_posicion(lista_t *lista, size_t posicion);
  * Si no existe el elemento devuelve NULL.
  */
 void *lista_buscar_elemento(lista_t *lista, int (*comparador)(void *, void *),
-			    void *contexto);
+                            void *contexto);
 
 /**
  * Devuelve el primer elemento de la lista o NULL si la lista se
@@ -106,7 +108,7 @@ void lista_destruir_todo(lista_t *lista, void (*funcion)(void *));
  * Crea un iterador para una lista. El iterador creado es válido desde
  * el momento de su creación hasta que no haya mas elementos por
  * recorrer o se modifique la lista iterada (agregando o quitando
- * elementos de la lista). 
+ * elementos de la lista).
  *
  * Al momento de la creación, el iterador queda listo para devolver el
  * primer elemento utilizando lista_iterador_elemento_actual.
@@ -154,6 +156,6 @@ void lista_iterador_destruir(lista_iterador_t *iterador);
  *
  */
 size_t lista_con_cada_elemento(lista_t *lista, bool (*funcion)(void *, void *),
-			       void *contexto);
+                               void *contexto);
 
 #endif /* __LISTA_H__ */
